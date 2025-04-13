@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Client</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      #log {
+        border: 1px solid #ddd;
+        padding: 10px;
+        height: 200px;
+        overflow-y: auto;
+        margin-top: 10px;
+      }
+      input {
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebSocket Chat</h1>
+    <input type="text" id="username" placeholder="Your name" />
+    <br /><br />
+    <input type="text" id="messageInput" placeholder="Type a message" />
+    <button onclick="sendMessage()">Send</button>
+    <div id="log"></div>
+
+    <script>
+      const socket = new WebSocket("ws://localhost:8080");
+
+      socket.onopen = () => {
+        log("✅ Connected to WebSocket server");
+      };
+
+      socket.onmessage = (event) => {
+        log("📨 " + event.data);
+      };
+
+      function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const username =
+          document.getElementById("username").value || "Anonymous";
+        const message = input.value;
+        const fullMessage = `${username}: ${message}`;
+        socket.send(fullMessage);
+        input.value = "";
+      }
+
+      function log(message) {
+        const logDiv = document.getElementById("log");
+        const p = document.createElement("p");
+        p.textContent = message;
+        logDiv.appendChild(p);
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
